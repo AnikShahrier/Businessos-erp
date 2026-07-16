@@ -20,7 +20,7 @@ export class LoginDto {
 export class AuthService {
   constructor(private jwtService: JwtService) {}
 
-  async register(dto: RegisterDto) {
+  async register(dto: any) {
     const existing = await prisma.user.findUnique({ 
       where: { email: dto.email } 
     });
@@ -128,7 +128,7 @@ export class AuthService {
     };
   }
 
-  async login(dto: LoginDto) {
+  async login(dto: any) {
     const user = await prisma.user.findUnique({
       where: { email: dto.email },
       include: { organization: true },
