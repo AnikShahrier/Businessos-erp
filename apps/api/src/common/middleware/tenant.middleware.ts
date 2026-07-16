@@ -6,19 +6,12 @@ import { JwtService } from '@nestjs/jwt';
 declare module 'express' {
   interface Request {
     organizationId?: string;
-    tenantPrisma?: ReturnType<typeof withTenant>;
+    tenantPrisma?: any;
   }
-}
-
-interface JwtUser {
-  id: string;
-  email: string;
-  organizationId: string;
 }
 
 @Injectable()
 export class TenantMiddleware implements NestMiddleware {
-  // FIXED: Create JwtService manually instead of DI
   private jwtService: JwtService;
 
   constructor() {
@@ -39,13 +32,6 @@ export class TenantMiddleware implements NestMiddleware {
     try {
       const payload = this.jwtService.verify(token);
 
-      const user: JwtUser = {
-        id: payload.sub,
-        email: payload.email,
-        organizationId: payload.organizationId,
-      };
-
-      (req as any).user = user;
       req.organizationId = payload.organizationId;
       req.tenantPrisma = withTenant(payload.organizationId);
 

@@ -6,10 +6,13 @@ import { Toaster } from 'sonner';
 import './index.css';
 
 // Import pages
+import EditEmployeePage from './routes/employees.$id.edit';
 import HomePage from './routes/index';
 import LoginPage from './routes/login';
 import RegisterPage from './routes/register';
 import DashboardPage from './routes/dashboard';
+import EmployeesPage from './routes/employees';
+import NewEmployeePage from './routes/employees.new';
 import { ProtectedRoute } from './components/protected-route';
 
 const queryClient = new QueryClient({
@@ -59,11 +62,44 @@ const dashboardRoute = createRoute({
   ),
 });
 
+const employeesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/employees',
+  component: () => (
+    <ProtectedRoute>
+      <EmployeesPage />
+    </ProtectedRoute>
+  ),
+});
+
+const newEmployeeRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/employees/new',
+  component: () => (
+    <ProtectedRoute>
+      <NewEmployeePage />
+    </ProtectedRoute>
+  ),
+});
+
+const editEmployeeRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/employees/$id/edit',
+  component: () => (
+    <ProtectedRoute>
+      <EditEmployeePage />
+    </ProtectedRoute>
+  ),
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
   registerRoute,
   dashboardRoute,
+  employeesRoute,
+  newEmployeeRoute,
+  editEmployeeRoute,
 ]);
 
 const router = createRouter({ routeTree });

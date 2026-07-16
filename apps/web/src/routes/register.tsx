@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import { Link } from '@tanstack/react-router';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 
 export default function RegisterPage() {
@@ -140,9 +141,9 @@ export default function RegisterPage() {
 
           <p className="mt-4 text-center text-sm text-gray-600">
             Already have an account?{' '}
-            <a href="/login" className="text-blue-600 hover:underline font-medium">
-              Sign in
-            </a>
+            <Link to="/login" className="text-blue-600 hover:underline font-medium">
+  Sign in
+</Link>
           </p>
         </CardContent>
       </Card>

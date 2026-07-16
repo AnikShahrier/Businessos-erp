@@ -1,27 +1,25 @@
-import { PrismaClient, Prisma } from '@prisma/client';
-
-// ==========================================
-// NEON-SPECIFIC: Connection Pooling
-// ==========================================
-// Neon is serverless, so we need connection pooling
-// Prisma handles this automatically with the connection string
-// Just make sure your Neon URL has ?sslmode=require
+import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-const logConfig: Prisma.LogLevel[] = process.env.NODE_ENV === 'development' 
+const logConfig: string[] = process.env.NODE_ENV === 'development' 
   ? ['query', 'error', 'warn']
   : ['error'];
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({
-  log: logConfig,
+  log: logConfig as any,
 });
 
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }
+
+// Handle connection issues with Neon
+prisma.$connect().catch((err) => {
+  console.error('Prisma connection error:', err);
+});
 
 // ==========================================
 // TENANT MAGIC: withTenant

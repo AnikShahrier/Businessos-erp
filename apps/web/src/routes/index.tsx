@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { Button } from '../components/ui/button';
 
 export default function HomePage() {
@@ -16,10 +17,10 @@ export default function HomePage() {
         </p>
         <div className="flex gap-4 justify-center">
           <Button asChild size="lg">
-            <a href="/register">Get Started</a>
+            <Link to="/register">Get Started</Link>
           </Button>
           <Button variant="outline" size="lg" asChild>
-            <a href="/login">Sign In</a>
+            <Link to="/login">Sign In</Link>
           </Button>
         </div>
       </div>

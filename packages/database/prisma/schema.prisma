@@ -154,25 +154,27 @@ model RolePermission {
 // ==========================================
 
 model Employee {
-  id          String   @id @default(cuid())
-  employeeId  String   @unique @map("employee_id")
-  department  String?
-  position    String?
-  joinDate    DateTime @map("join_date")
-  salary      Decimal? @db.Decimal(10, 2)
-  status      EmployeeStatus @default(ACTIVE)
+  id             String         @id @default(cuid())
+  employeeId     String         @unique @map("employee_id")
+  department     String?
+  position       String?
+  joinDate       DateTime       @default(now()) @map("join_date")
+  salary         Decimal?       @db.Decimal(10, 2)
+  status         EmployeeStatus @default(ACTIVE)
 
-  userId      String   @unique @map("user_id")
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String?        @unique @map("user_id")  // <-- Added ? to make optional
+  user           User?          @relation(fields: [userId], references: [id], onDelete: Cascade)  // <-- Only ONE user relation, with ?
 
-  organizationId String   @map("organization_id")
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String         @map("organization_id")
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   @@index([organizationId])
   @@index([employeeId])
   @@map("employees")
 }
-
 enum EmployeeStatus {
   ACTIVE
   ON_LEAVE
