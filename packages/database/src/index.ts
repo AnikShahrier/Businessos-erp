@@ -10,6 +10,12 @@ const logConfig: string[] = process.env.NODE_ENV === 'development'
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({
   log: logConfig as any,
+  // Add these for Neon:
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL,
+    },
+  },
 });
 
 if (process.env.NODE_ENV !== 'production') {

@@ -4,12 +4,14 @@ import { AuthModule } from './auth/auth.module';
 import { EmployeesModule } from './employees/employees.module';
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
 import { MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { InventoryModule } from './inventory/inventory.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
     EmployeesModule,
+    InventoryModule,
   ],
 })
 export class AppModule implements NestModule {

@@ -1,13 +1,15 @@
 import { Link } from '@tanstack/react-router';
 import { useAuthStore } from '../../store/authStore';
+import { Package } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 export function Sidebar() {
   const user = useAuthStore((state) => state.user);
 
-  const menuItems = [
+  const menuItems: Array<{ label: string; to: string; icon: ReactNode }> = [
     { label: 'Dashboard', to: '/dashboard', icon: '📊' },
     { label: 'Employees', to: '/employees', icon: '👥' },
-    { label: 'Inventory', to: '/inventory', icon: '📦' },
+    { label: 'Inventory', to: '/inventory', icon: <Package /> },
     { label: 'Sales', to: '/sales', icon: '💰' },
     { label: 'Reports', to: '/reports', icon: '📈' },
   ];
