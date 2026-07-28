@@ -17,6 +17,9 @@ import InventoryPage from './routes/InventoryPage';
 import { ProtectedRoute } from './components/protected-route';
 import NewInventoryPage from './routes/NewInventoryPage';
 import EditInventoryPage from './routes/EditInventoryPage';
+import SalesPage from './routes/SalesPage';
+import NewSalePage from './routes/NewSalePage';
+import SaleDetailPage from './routes/SaleDetailPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,6 +56,23 @@ const registerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/register',
   component: RegisterPage,
+});
+const salesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/sales',
+  component: SalesPage,
+});
+
+const newSaleRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/sales/new',
+  component: NewSalePage,
+});
+
+const saleDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/sales/$saleId',
+  component: SaleDetailPage,
 });
 
 const dashboardRoute = createRoute({
@@ -121,7 +141,10 @@ const routeTree = rootRoute.addChildren([
   editEmployeeRoute,
   inventoryRoute,
    inventoryNewRoute,
-  inventoryEditRoute, 
+  inventoryEditRoute,
+  salesRoute,
+  newSaleRoute,
+  saleDetailRoute, 
 ]);
 
 const router = createRouter({ routeTree });

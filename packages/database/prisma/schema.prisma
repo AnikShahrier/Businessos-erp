@@ -26,6 +26,7 @@ model Organization {
   roles       Role[]
   permissions Permission[]
   inventory   InventoryItem[]
+  customer    Customer[]
   sales       Sale[]
   projects    Project[]
 
@@ -156,14 +157,16 @@ model RolePermission {
 model Employee {
   id             String         @id @default(cuid())
   employeeId     String         @unique @map("employee_id")
+  firstName      String         @map("first_name")        // <-- ADD
+  lastName       String         @map("last_name")         // <-- ADD
   department     String?
   position       String?
   joinDate       DateTime       @default(now()) @map("join_date")
   salary         Decimal?       @db.Decimal(10, 2)
   status         EmployeeStatus @default(ACTIVE)
 
-  userId         String?        @unique @map("user_id")  // <-- Added ? to make optional
-  user           User?          @relation(fields: [userId], references: [id], onDelete: Cascade)  // <-- Only ONE user relation, with ?
+  userId         String?        @unique @map("user_id")
+  user           User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   organizationId String         @map("organization_id")
   organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -194,10 +197,11 @@ model InventoryItem {
   unitPrice   Decimal  @default(0) @map("unit_price") @db.Decimal(10, 2)
   category    String?
   location    String?
-  reorderPoint Int     @default(0) @map("reorder_point")
+  saleItems    SaleItem[]
+  reorderLevel Int     @default(0) @map("reorder_level")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
-
+  
   organizationId String   @map("organization_id")
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
@@ -210,45 +214,79 @@ model InventoryItem {
 // SALES
 // ==========================================
 
-model Sale {
-  id          String   @id @default(cuid())
-  customerName String  @map("customer_name")
-  customerEmail String? @map("customer_email")
-  totalAmount Decimal  @map("total_amount") @db.Decimal(10, 2)
-  status      SaleStatus @default(PENDING)
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+model Customer {
+  id             String   @id @default(cuid())
+  name           String
+  email          String?
+  phone          String?
+  address        String?
 
   organizationId String   @map("organization_id")
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  items       SaleItem[]
+  sales          Sale[]
+
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
   @@index([organizationId])
-  @@index([status])
+  @@map("customers")
+}
+
+enum SaleStatus {
+  DRAFT
+  PENDING
+  PAID
+  CANCELLED
+}
+
+model Sale {
+  id             String     @id @default(cuid())
+  invoiceNumber  String     @unique @map("invoice_number")
+  
+  customerId     String     @map("customer_id")
+  customer       Customer   @relation(fields: [customerId], references: [id])
+
+  status         SaleStatus @default(DRAFT)
+  subtotal       Decimal    @default(0) @db.Decimal(10, 2)
+  tax            Decimal    @default(0) @db.Decimal(10, 2)
+  total          Decimal    @default(0) @db.Decimal(10, 2)
+  notes          String?
+
+  items          SaleItem[]
+
+  organizationId String     @map("organization_id")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+
+  @@index([organizationId])
+  @@index([customerId])
   @@map("sales")
 }
 
 model SaleItem {
-  id          String   @id @default(cuid())
-  saleId      String   @map("sale_id")
-  productName String   @map("product_name")
-  quantity    Int
-  unitPrice   Decimal  @map("unit_price") @db.Decimal(10, 2)
-  totalPrice  Decimal  @map("total_price") @db.Decimal(10, 2)
+  id              String   @id @default(cuid())
+  
+  saleId          String   @map("sale_id")
+  sale            Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
 
-  sale        Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  inventoryItemId String?  @map("inventory_item_id")
+  inventoryItem   InventoryItem? @relation(fields: [inventoryItemId], references: [id])
+
+  productName     String   @map("product_name")
+  quantity        Int
+  unitPrice       Decimal  @db.Decimal(10, 2) @map("unit_price")
+  total           Decimal  @db.Decimal(10, 2)
+
+  createdAt       DateTime @default(now()) @map("created_at")
 
   @@index([saleId])
+  @@index([inventoryItemId])
   @@map("sale_items")
 }
 
-enum SaleStatus {
-  PENDING
-  COMPLETED
-  CANCELLED
-  REFUNDED
-}
 
 // ==========================================
 // PROJECTS

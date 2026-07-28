@@ -4,7 +4,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { prisma } from '@businessos/database';
-import { CreateInventoryDto, InventoryStatus } from './dto/create-inventory.dto';
+import { CreateInventoryDto } from './dto/create-inventory.dto';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
 
 @Injectable()
@@ -20,36 +20,41 @@ export class InventoryService {
   }
 
   async create(dto: CreateInventoryDto, organizationId: string) {
-    let sku: string;
-    let attempts = 0;
-    do {
-      sku = this.generateSKU(dto.name, dto.category);
-      attempts++;
-      // FIX #1: Use findFirst instead of findUnique for SKU check
-      const existing = await prisma.inventoryItem.findFirst({
-        where: { sku, organizationId },
+    const sku = this.generateSKU(dto.name, dto.category);
+
+    try {
+      return await prisma.inventoryItem.create({
+        data: {
+          name: dto.name,
+          description: dto.description,
+          category: dto.category,
+          location: dto.location,
+          quantity: dto.quantity,
+          unitPrice: dto.unitPrice,
+          reorderLevel: dto.reorderLevel,  // <-- CHANGED
+          sku,
+          organizationId,
+        },
       });
-      if (!existing) break;
-    } while (attempts < 5);
-
-    if (attempts >= 5) {
-      throw new ConflictException('Failed to generate unique SKU. Please try again.');
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        const newSku = this.generateSKU(dto.name, dto.category);
+        return prisma.inventoryItem.create({
+          data: {
+            name: dto.name,
+            description: dto.description,
+            category: dto.category,
+            location: dto.location,
+            quantity: dto.quantity,
+            unitPrice: dto.unitPrice,
+            reorderLevel: dto.reorderLevel,  // <-- CHANGED
+            sku: newSku,
+            organizationId,
+          },
+        });
+      }
+      throw error;
     }
-
-    return prisma.inventoryItem.create({
-      data: {
-        name: dto.name,
-        description: dto.description,
-        category: dto.category,
-        quantity: dto.quantity,
-        unitPrice: dto.unitPrice,
-        costPrice: dto.costPrice ?? null,
-       reorderLevel: dto.reorderLevel,
-        status: dto.status,
-        sku,
-        organizationId,
-      },
-    });
   }
 
   async findAll(
@@ -57,7 +62,6 @@ export class InventoryService {
     filters: {
       search?: string;
       category?: string;
-      status?: string;
       lowStock?: boolean;
     } = {},
   ) {
@@ -75,24 +79,16 @@ export class InventoryService {
       where.category = { equals: filters.category, mode: 'insensitive' };
     }
 
-    if (filters.status) {
-      where.status = filters.status as InventoryStatus;
-    }
-
-    // FIX #2: Use raw query or filter in JS for lowStock
-   if (filters.lowStock) {
-  const items = await prisma.$queryRaw`
-    SELECT * FROM inventory_items 
-    WHERE "organization_id" = ${organizationId}
-    AND quantity <= "reorder_level"
-  `;
-  return items;
-}
-
-    return prisma.inventoryItem.findMany({
+    const items = await prisma.inventoryItem.findMany({
       where,
       orderBy: { createdAt: 'desc' },
     });
+
+    if (filters.lowStock) {
+      return items.filter(item => item.quantity <= item.reorderLevel);  // <-- CHANGED
+    }
+
+    return items;
   }
 
   async findOne(id: string, organizationId: string) {
@@ -114,11 +110,10 @@ export class InventoryService {
     if (dto.name !== undefined) data.name = dto.name;
     if (dto.description !== undefined) data.description = dto.description;
     if (dto.category !== undefined) data.category = dto.category;
+    if (dto.location !== undefined) data.location = dto.location;
     if (dto.quantity !== undefined) data.quantity = dto.quantity;
     if (dto.unitPrice !== undefined) data.unitPrice = dto.unitPrice;
-    if (dto.costPrice !== undefined) data.costPrice = dto.costPrice ?? null;
-    if (dto.reorderLevel !== undefined) data.reorderLevel = dto.reorderLevel;
-    if (dto.status !== undefined) data.status = dto.status;
+    if (dto.reorderLevel !== undefined) data.reorderLevel = dto.reorderLevel;  // <-- CHANGED
 
     return prisma.inventoryItem.update({
       where: { id },
@@ -128,9 +123,6 @@ export class InventoryService {
 
   async remove(id: string, organizationId: string) {
     await this.findOne(id, organizationId);
-
-    return prisma.inventoryItem.delete({
-      where: { id },
-    });
+    return prisma.inventoryItem.delete({ where: { id } });
   }
 }

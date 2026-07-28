@@ -79,7 +79,7 @@ export default function EmployeesPage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Position</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Salary</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -101,7 +101,7 @@ export default function EmployeesPage() {
                   <td className="px-6 py-4 text-gray-600">
                     {emp.salary ? `$${emp.salary.toLocaleString()}` : '-'}
                   </td>
-                  <td className="px-6 py-4 text-right space-x-2">
+                  <td className="px-6 py-4 text-center space-x-2 flex justify-center items-center">
                     <Link 
   to="/employees/$id/edit"
   params={{ id: emp.id }}

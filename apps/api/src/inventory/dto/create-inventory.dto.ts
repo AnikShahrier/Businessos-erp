@@ -1,9 +1,4 @@
-import { IsString, IsOptional, IsInt, IsDecimal, Min, IsEnum } from 'class-validator';
-export enum InventoryStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  DISCONTINUED = 'DISCONTINUED',
-}
+import { IsString, IsOptional, IsInt, IsDecimal, Min } from 'class-validator';
 
 export class CreateInventoryDto {
   @IsString()
@@ -17,6 +12,10 @@ export class CreateInventoryDto {
   @IsString()
   category?: string;
 
+  @IsOptional()
+  @IsString()
+  location?: string;
+
   @IsInt()
   @Min(0)
   quantity: number = 0;
@@ -24,15 +23,7 @@ export class CreateInventoryDto {
   @IsDecimal({ decimal_digits: '2' })
   unitPrice: string;
 
-  @IsOptional()
-  @IsDecimal({ decimal_digits: '2' })
-  costPrice?: string;
-
   @IsInt()
   @Min(0)
-  reorderLevel: number = 10;
-
-  @IsOptional()
-  @IsEnum(InventoryStatus)
-  status?: InventoryStatus = InventoryStatus.ACTIVE;
+  reorderLevel: number = 10;  // <-- CHANGED
 }

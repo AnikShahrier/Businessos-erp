@@ -5,6 +5,9 @@ import { EmployeesModule } from './employees/employees.module';
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
 import { MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { InventoryModule } from './inventory/inventory.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { SalesModule } from './sales/sales.module';
+import { CustomersModule } from './customers/customers.module';
 
 @Module({
   imports: [
@@ -12,6 +15,9 @@ import { InventoryModule } from './inventory/inventory.module';
     AuthModule,
     EmployeesModule,
     InventoryModule,
+    DashboardModule,
+     SalesModule,
+     CustomersModule,
   ],
 })
 export class AppModule implements NestModule {

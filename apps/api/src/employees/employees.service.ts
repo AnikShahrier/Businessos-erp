@@ -6,7 +6,7 @@ export class EmployeesService {
   async findAll(organizationId: string) {
     return prisma.employee.findMany({
       where: { organizationId },
-      orderBy: { id: 'desc' },
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -45,6 +45,8 @@ export class EmployeesService {
     return prisma.employee.create({
       data: {
         employeeId,
+        firstName: dto.firstName,      // <-- ADD
+        lastName: dto.lastName,         // <-- ADD
         department: dto.department || null,
         position: dto.position || null,
         joinDate: dto.joinDate ? new Date(dto.joinDate) : new Date(),
@@ -67,6 +69,9 @@ export class EmployeesService {
     return prisma.employee.update({
       where: { id },
       data: {
+
+        ...(dto.firstName !== undefined && { firstName: dto.firstName }),
+        ...(dto.lastName !== undefined && { lastName: dto.lastName }),
         ...(dto.department !== undefined && { department: dto.department }),
         ...(dto.position !== undefined && { position: dto.position }),
         ...(dto.salary !== undefined && { salary: dto.salary ? parseFloat(dto.salary) : null }),

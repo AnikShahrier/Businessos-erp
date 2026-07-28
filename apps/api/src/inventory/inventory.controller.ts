@@ -1,4 +1,3 @@
-// apps/api/src/inventory/inventory.controller.ts
 import {
   Controller,
   Get,
@@ -14,7 +13,7 @@ import {
 import { InventoryService } from './inventory.service';
 import { CreateInventoryDto } from './dto/create-inventory.dto';
 import { UpdateInventoryDto } from './dto/update-inventory.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Adjust path
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('inventory')
 @UseGuards(JwtAuthGuard)
@@ -31,13 +30,11 @@ export class InventoryController {
     @Request() req,
     @Query('search') search?: string,
     @Query('category') category?: string,
-    @Query('status') status?: string,
     @Query('lowStock') lowStock?: string,
   ) {
     return this.inventoryService.findAll(req.user.organizationId, {
       search,
       category,
-      status,
       lowStock: lowStock === 'true',
     });
   }

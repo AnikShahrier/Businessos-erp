@@ -65,11 +65,11 @@ function useDeleteInventory() {
   });
 }
 
-const statusColors: Record<string, string> = {
-  ACTIVE: 'bg-green-100 text-green-800',
-  INACTIVE: 'bg-gray-100 text-gray-800',
-  DISCONTINUED: 'bg-red-100 text-red-800',
-};
+// const statusColors: Record<string, string> = {
+//   ACTIVE: 'bg-green-100 text-green-800',
+//   INACTIVE: 'bg-gray-100 text-gray-800',
+//   DISCONTINUED: 'bg-red-100 text-red-800',
+// };
 
 
 // --- Component ---
@@ -156,7 +156,7 @@ export default function InventoryPage() {
           <option value="Office">Office</option>
         </select>
 
-        <select
+        {/* <select
           value={filters.status || 'all'}
           onChange={(e) => setFilters(prev => ({ 
             ...prev, 
@@ -168,7 +168,7 @@ export default function InventoryPage() {
           <option value="ACTIVE">Active</option>
           <option value="INACTIVE">Inactive</option>
           <option value="DISCONTINUED">Discontinued</option>
-        </select>
+        </select> */}
 
         <Button
           variant={filters.lowStock ? 'default' : 'outline'}
@@ -191,8 +191,8 @@ export default function InventoryPage() {
               <th className="text-left p-3 font-medium">Category</th>
               <th className="text-right p-3 font-medium">Qty</th>
               <th className="text-right p-3 font-medium">Price</th>
-              <th className="text-left p-3 font-medium">Status</th>
-              <th className="p-3 w-[100px]"></th>
+              {/* <th className="text-left p-3 font-medium">Status</th> */}
+              <th className="p-3 w-[100px]">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -221,16 +221,16 @@ export default function InventoryPage() {
                     {isLowStock(item) && <AlertTriangle className="inline ml-1 h-3 w-3 text-red-500" />}
                   </td>
                   <td className="p-3 text-right">${Number(item.unitPrice).toFixed(2)}</td>
-                  <td className="p-3">
+                  {/* <td className="p-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[item.status]}`}>
                       {item.status}
                     </span>
-                  </td>
-                  <td className="p-3">
-                    <div className="flex gap-2">
+                  </td> */}
+                  <td className="p-3 text-center">
+                    <div className="flex gap-3 justify-center items-center">
                       {/* ✅ navigate called inside onClick */}
                       <Pencil 
-                        className="h-4 w-4 text-blue-600 cursor-pointer" 
+                        className="h-4 w-4 text-blue-600 cursor-pointer " 
                         onClick={() => navigate({ to: '/inventory/$id/edit', params: { id: item.id } })}
                       />
                       <Trash2 

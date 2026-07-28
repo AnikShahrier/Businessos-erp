@@ -17,9 +17,9 @@ const formSchema = z.object({
   category: z.string().min(1, 'Category is required'),
   quantity: z.coerce.number().min(0, 'Quantity cannot be negative'),
   unitPrice: z.coerce.number().min(0.01, 'Unit price must be greater than 0'),
-  costPrice: z.coerce.number().min(0).optional(),
+  // costPrice: z.coerce.number().min(0).optional(),
   reorderLevel: z.coerce.number().min(0, 'Reorder level cannot be negative'),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'DISCONTINUED']),
+  // status: z.enum(['ACTIVE', 'INACTIVE', 'DISCONTINUED']),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -31,8 +31,8 @@ export default function NewInventoryPage() {
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
+    // setValue,
+    // watch,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -42,9 +42,9 @@ export default function NewInventoryPage() {
       description: '',
       quantity: 0,
       unitPrice: 0,
-      costPrice: undefined,
+      // costPrice: undefined,
       reorderLevel: 10,
-      status: 'ACTIVE',
+      // status: 'ACTIVE',
     },
   });
 
@@ -53,7 +53,7 @@ export default function NewInventoryPage() {
       const payload = {
         ...data,
         unitPrice: data.unitPrice.toString(),
-        costPrice: data.costPrice?.toString(),
+        // costPrice: data.costPrice?.toString(),
       };
       return api.post('/inventory', payload);
     },
@@ -123,10 +123,10 @@ export default function NewInventoryPage() {
                 <Input id="unitPrice" type="number" step="0.01" {...register('unitPrice', { valueAsNumber: true })} />
                 {errors.unitPrice && <p className="text-sm text-red-500">{errors.unitPrice.message}</p>}
               </div>
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="costPrice">Cost Price ($)</Label>
                 <Input id="costPrice" type="number" step="0.01" {...register('costPrice', { valueAsNumber: true })} />
-              </div>
+              </div> */}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -135,7 +135,7 @@ export default function NewInventoryPage() {
                 <Input id="reorderLevel" type="number" {...register('reorderLevel', { valueAsNumber: true })} />
                 {errors.reorderLevel && <p className="text-sm text-red-500">{errors.reorderLevel.message}</p>}
               </div>
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
                 <select
                   id="status"
@@ -147,7 +147,7 @@ export default function NewInventoryPage() {
                   <option value="INACTIVE">Inactive</option>
                   <option value="DISCONTINUED">Discontinued</option>
                 </select>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex justify-end gap-4 pt-4">
