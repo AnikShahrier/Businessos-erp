@@ -20,6 +20,7 @@ import EditInventoryPage from './routes/EditInventoryPage';
 import SalesPage from './routes/SalesPage';
 import NewSalePage from './routes/NewSalePage';
 import SaleDetailPage from './routes/SaleDetailPage';
+import ReportsPage from './routes/ReportsPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -69,6 +70,11 @@ const newSaleRoute = createRoute({
   component: NewSalePage,
 });
 
+const reportsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/reports',
+  component: ReportsPage,
+});
 const saleDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/sales/$saleId',
@@ -144,7 +150,8 @@ const routeTree = rootRoute.addChildren([
   inventoryEditRoute,
   salesRoute,
   newSaleRoute,
-  saleDetailRoute, 
+  saleDetailRoute,
+  reportsRoute,
 ]);
 
 const router = createRouter({ routeTree });
